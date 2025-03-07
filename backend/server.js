@@ -1,41 +1,29 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import authRoutes from "./routes/authRoutes.js";
+import candidateRoutes from "./routes/candidateRoutes.js";
+
+dotenv.config();
 
 const app = express();
-app.use(express.json());
+
+// Middleware
 app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/candidates", candidateRoutes);
+
+const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-// Define Candidate Model
-const Candidate = mongoose.model("Candidate", {
-  name: String,
-  votes: { type: Number, default: 0 },
-});
-
-// API Routes
-app.get("/candidates", async (req, res) => {
-  const candidates = await Candidate.find();
-  res.json(candidates);
-});
-
-app.post("/vote", async (req, res) => {
-  const { candidateId } = req.body;
-  await Candidate.findByIdAndUpdate(candidateId, { $inc: { votes: 1 } });
-  res.send("Vote submitted!");
-});
-
-app.get("/results", async (req, res) => {
-  const results = await Candidate.find();
-  res.json(results);
-});
-
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+mongoose
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("MongoDB Connected");
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch((err) => console.log(err));

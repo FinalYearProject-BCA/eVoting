@@ -6,6 +6,7 @@ import AdminPanel from "./pages/AdminPanel";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
+import Vote from "./pages/Vote";
 
 function ProtectedRoute({ element, role }) {
   const { user } = useUser();
@@ -18,7 +19,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/vote" element={<UserDashboard />} />
+          <Route path="/vote" element={<Vote />} />
           <Route path="/results" element={<Results />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/login" element={<Login />} />
